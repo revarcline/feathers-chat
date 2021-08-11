@@ -17,9 +17,37 @@ const getGravatar = (email: string) => {
   return `${gravatarUrl}/${hash}?${query}`;
 };
 
-export class Users extends Service {
+// type interface for our user (does not validate data)
+interface UserData {
+  _id?: string;
+  email: string;
+  password: string;
+  name?: string;
+  avatar?: string;
+  githubId: string;
+}
+
+export class Users extends Service<UserData> {
   //eslint-disable-next-line @typescript-eslint/no-unused-vars
   constructor(options: Partial<NedbServiceOptions>, app: Application) {
     super(options);
+  }
+
+  create(data: UserData, params?: Params) {
+    // this is the information we want from the user signup data
+    const { email, password, githubId, name } = data;
+    // use existing avatar image or return gravatar for email
+    const avatar = data.avatar || getGravatar(email);
+    // complete user
+    const userData = {
+      email,
+      name,
+      password,
+      githubId,
+      avatar,
+    };
+
+    // call original 'create' method with existing 'params' and new data
+    return super.create(userData, params);
   }
 }
