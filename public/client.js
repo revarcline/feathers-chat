@@ -137,6 +137,40 @@ const addMessage = (message) => {
   }
 };
 
+const showLogin = (error) => {
+  if (document.querySelectorAll('.login').length && error) {
+    document
+      .querySelector('.heading')
+      .insertAdjacentHTML(
+        'beforeend',
+        `<p>There was an error: ${error.message}</p>`
+      );
+  } else {
+    document.getElementById('app').innerHTML = loginHTML;
+  }
+};
+
+const showChat = async () => {
+  document.getElementById('app').innerHTML = chatHTML;
+
+  // find the latest 25 messages. They will come with the newest first
+  const messages = await client.service('messages').find({
+    query: {
+      $sort: { createdAt: -1 },
+      $limit: 25,
+    },
+  });
+
+  // we want to show newest last
+  messages.data.reverse().forEach(addMessage);
+
+  // find all users
+  const users = await client.service('users').find();
+
+  // add each user to the list
+  users.data.forEach(addUser);
+};
+
 const login = async () => {
   try {
     // First try to log in with an existing JWT
