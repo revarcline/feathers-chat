@@ -1,4 +1,5 @@
 import * as authentication from '@feathersjs/authentication';
+import processMessage from '../../hooks/process-message';
 // Don't remove this comment. It's needed to format import lines nicely.
 
 const { authenticate } = authentication.hooks;
@@ -8,7 +9,7 @@ export default {
     all: [ authenticate('jwt') ],
     find: [],
     get: [],
-    create: [],
+    create: [processMessage()],
     update: [],
     patch: [],
     remove: []
