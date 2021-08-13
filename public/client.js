@@ -171,19 +171,33 @@ const showChat = async () => {
   users.data.forEach(addUser);
 };
 
+const getCredentials = () => {
+  const user = {
+    email: document.querySelector('[name="email"]').value,
+    password: document.querySelector('[name="password"]').value,
+  };
+
+  return user;
+};
+
+// log in either using given email/password or jwt from storage
 const login = async () => {
   try {
-    // First try to log in with an existing JWT
-    return await client.reAuthenticate();
+    if (!crededentials) {
+      // First try to log in with an existing JWT
+      return await client.reAuthenticate();
+    } else {
+      // use local strategy with credentials
+      await client.authenticate({
+        strategy: 'local',
+        ...credentials,
+      });
+    }
+
+    // if successful show chat page
+    showChat();
   } catch (error) {
-    // If that errors, log in with email/password
-    // Here we would normally show a login page
-    // to get the login information
-    return await client.authenticate({
-      strategy: 'local',
-      email: 'hello@feathersjs.com',
-      password: 'supersecret',
-    });
+    showLogin(error);
   }
 };
 
