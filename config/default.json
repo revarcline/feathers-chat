@@ -14,6 +14,13 @@
       "jwt",
       "local"
     ],
+    "oauth": {
+      "redirect": "/",
+      "github": {
+        "key": "GH_CLIENT_ID",
+        "secret": "GH_CLIENT_SECRET"
+      }
+    },
     "jwtOptions": {
       "header": {
         "typ": "access"
