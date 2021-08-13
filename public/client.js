@@ -201,13 +201,57 @@ const login = async () => {
   }
 };
 
-const main = async () => {
-  const auth = await login();
-
-  console.log('User is authenticated', auth);
-
-  // Log us out again
-  await client.logout();
+const addEventListener = (selector, event, handler) => {
+  document.addEventListener(event, async (ev) => {
+    if (ev.target.closest(selector)) {
+      handler(ev);
+    }
+  });
 };
 
-main();
+// signup and login button click handler
+addEventListener('#signup', 'click', async () => {
+  // for signup, create a new user and log them in
+  const credentials = getCredentials();
+
+  // first create the user
+  await client.service('users').create(credentials);
+  // if successful log them in
+  await login(credentials);
+});
+
+// login button click handler
+addEventListener('#login', 'click', async () => {
+  const user = getCredentials();
+
+  await login(user);
+});
+
+// logout button click handler
+addEventListener('#logout', 'click', async () => {
+  await client.logout();
+
+  document.getElementById('app').innerHTML = loginHTML;
+});
+
+addEventListener('#send-message', 'submit', async (ev) => {
+  // message text input field
+  const input = document.querySelector('[name="text"]');
+
+  ev.preventDefault();
+
+  // create a new message and clear the input field
+  await client.service('messages').create({
+    text: input.value,
+  });
+
+  input.value = '';
+});
+
+client.service('messages').on('created', addMessage);
+
+client.service('users').on('created', addUser);
+
+// call login right away so we can show the chat window
+// if the user can already be authenticated
+login();
