@@ -183,7 +183,7 @@ const getCredentials = () => {
 // log in either using given email/password or jwt from storage
 const login = async () => {
   try {
-    if (!crededentials) {
+    if (!credentials) {
       // First try to log in with an existing JWT
       return await client.reAuthenticate();
     } else {
